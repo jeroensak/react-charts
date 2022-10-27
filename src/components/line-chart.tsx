@@ -2,10 +2,9 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { ClipPath } from '@visx/clip-path';
 import { Group } from '@visx/group';
 import { scaleLinear, scaleTime } from '@visx/scale';
-import { Area, LinePath } from '@visx/shape';
+import { Area, LinePath, Line } from '@visx/shape';
 import React, { useId } from 'react';
 import { useChartDimensions, withChartWrapper } from './with-chart-wrapper';
-// import { TooltipCursor } from './tooltip/tooltip-cursor';
 import { SafeSVG } from '../utils/safe-svg';
 import { LinearGradient } from '@visx/gradient';
 import dayjs from 'dayjs';
@@ -25,20 +24,20 @@ export interface LineMeta {
   dotted?: boolean;
 }
 
-interface LineChartProps<DataType> {
-  timeScaleDomain?: [Date, Date];
+export interface LineChartProps<DataType> {
   lines: LineMeta[];
-  data?: DataType[];
-  toggleLines?: true;
+  data: DataType[];
   xAxisProps?: Partial<React.ComponentProps<typeof AxisBottom>>;
   yAxisProps?: Partial<React.ComponentProps<typeof AxisLeft>>;
-  hideLegend?: true;
-  simplified?: true;
-  hideTooltip?: true;
+  simplified?: boolean;
+  hideTooltip?: boolean;
   countScaleDomain?: [number, number];
+  timeScaleDomain?: [Date, Date];
   numberFormatter?: (value: number | bigint) => string;
   axisColor?: string;
   textColor?: string;
+  showXGridLines?: boolean;
+  showYGridLines?: boolean;
 }
 
 const defaultXAxisProps: (
@@ -72,17 +71,19 @@ const defaultYAxisProps: (axisColor?: string, textColor?: string) => Partial<Rea
 });
 
 const LineChartBase = <DataType extends RequiredDataProperties>({
-  timeScaleDomain,
   lines,
   data,
   xAxisProps,
   yAxisProps,
   simplified,
-  // hideTooltip,
+  hideTooltip,
+  timeScaleDomain,
   countScaleDomain,
   numberFormatter,
-  axisColor,
-  textColor,
+  axisColor = '#07080A',
+  textColor = '#07080A',
+  showXGridLines,
+  showYGridLines,
 }: Omit<LineChartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const id = useId();
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
@@ -125,9 +126,49 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
     }, {} as any);
   }, [lines, data, timeScale, countScale]);
 
+  const xGridValues = React.useMemo(() => {
+    if (!showXGridLines) return null;
+
+    return (xAxisProps?.tickValues || timeScale.ticks())
+      .map((v) => timeScale(v) + offset.left)
+      .filter((v) => v !== offset.left && v !== outerChartWidth);
+  }, [showXGridLines, timeScale, offset.left, outerChartWidth]);
+
+  const yGridValues = React.useMemo(() => {
+    if (!showYGridLines) return null;
+
+    return (yAxisProps?.tickValues || countScale.ticks())
+      .map((v) => countScale(v))
+      .filter((v) => v !== 0 && v !== innerChartHeight);
+  }, [showYGridLines, countScale, offset.left, outerChartWidth]);
+
   return (
     <div style={{ position: 'relative' }}>
       <SafeSVG width={outerChartWidth} height={outerChartHeight}>
+        {xGridValues?.map((value, index) => (
+          <Line
+            key={index}
+            x1={value}
+            x2={value}
+            y1={0}
+            y2={innerChartHeight}
+            stroke={`${axisColor}44`}
+            strokeWidth={1}
+          />
+        ))}
+
+        {yGridValues?.map((value, index) => (
+          <Line
+            key={index}
+            x1={offset.left}
+            x2={outerChartWidth}
+            y1={value}
+            y2={value}
+            stroke={`${axisColor}44`}
+            strokeWidth={1}
+          />
+        ))}
+
         {lines.map((line) => (
           <LinearGradient
             key={line.accessor}
@@ -181,13 +222,13 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
               </React.Fragment>
             );
           })}
-          <TooltipCursor data={dataForTooltip} xScale={timeScale} yScale={countScale} />
+          {!hideTooltip && <TooltipCursor data={dataForTooltip} xScale={timeScale} yScale={countScale} />}
         </Group>
         <AxisLeft
           left={offset.left}
           scale={countScale}
           {...defaultYAxisProps(axisColor, textColor)}
-          tickValues={simplified ? [0, Math.floor(yMax)] : defaultYAxisProps(axisColor, textColor).tickValues}
+          tickValues={simplified ? countScale.domain() : defaultYAxisProps(axisColor, textColor).tickValues}
           tickStroke={simplified ? 'transparent' : defaultYAxisProps(axisColor, textColor).tickStroke}
           tickFormat={numberFormatter}
           {...yAxisProps}
@@ -197,7 +238,7 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
           left={offset.left}
           scale={timeScale}
           {...defaultXAxisProps(axisColor, textColor)}
-          tickValues={[data[0].date, data[data.length - 1].date]}
+          tickValues={simplified ? timeScale.domain() : defaultXAxisProps(axisColor, textColor).tickValues}
           tickStroke={simplified ? 'transparent' : defaultXAxisProps(axisColor, textColor).tickStroke}
           {...xAxisProps}
         />
