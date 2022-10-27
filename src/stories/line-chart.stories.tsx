@@ -36,6 +36,10 @@ export default {
       control: 'boolean',
       defaultValue: false,
     },
+    hideLegend: {
+      control: 'boolean',
+      defaultValue: false,
+    },
     lines: {
       control: 'object',
       defaultValue: lines,

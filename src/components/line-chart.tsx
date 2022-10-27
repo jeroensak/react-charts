@@ -10,6 +10,8 @@ import { LinearGradient } from '@visx/gradient';
 import dayjs from 'dayjs';
 import { getMinMaxWithPadding } from '../utils/min-max';
 import { TooltipCursor } from './tooltip/tooltip-cursor';
+import { LegendOrdinal } from '@visx/legend';
+import { scaleOrdinal } from '@visx/scale';
 
 export interface RequiredDataProperties {
   [key: string]: any;
@@ -31,6 +33,7 @@ export interface LineChartProps<DataType> {
   yAxisProps?: Partial<React.ComponentProps<typeof AxisLeft>>;
   simplified?: boolean;
   hideTooltip?: boolean;
+  hideLegend?: boolean;
   countScaleDomain?: [number, number];
   timeScaleDomain?: [Date, Date];
   numberFormatter?: (value: number | bigint) => string;
@@ -77,6 +80,7 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   yAxisProps,
   simplified,
   hideTooltip,
+  hideLegend,
   timeScaleDomain,
   countScaleDomain,
   numberFormatter,
@@ -141,6 +145,11 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
       .map((v) => countScale(v))
       .filter((v) => v !== 0 && v !== innerChartHeight);
   }, [showYGridLines, countScale, offset.left, outerChartWidth]);
+
+  const ordinalColorScale = scaleOrdinal({
+    domain: lines.map((l) => l.label),
+    range: lines.map((l) => l.color),
+  });
 
   return (
     <div style={{ position: 'relative' }}>
@@ -243,6 +252,11 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
           {...xAxisProps}
         />
       </SafeSVG>
+      {!hideLegend && (
+        <div style={{ paddingLeft: offset.left }}>
+          <LegendOrdinal scale={ordinalColorScale} direction="row" labelMargin="0 20px 0 0" />
+        </div>
+      )}
     </div>
   );
 };
