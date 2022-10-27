@@ -1,0 +1,38 @@
+.react-charts__tooltip-content {
+  color: #fcfeff;
+  pointer-events: none;
+  background-color: #21252b;
+  border: 1px solid #07080a;
+  border-radius: 2px;
+  box-shadow: 0px 10px 24px rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  translate: 0 -100%;
+}
+
+.out-of-bounds--right .react-charts__tooltip-content {
+  translate: -50% -100%;
+}
+
+.out-of-bounds--left .react-charts__tooltip-content {
+  translate: 50% -100%;
+}
+
+.react-charts__tooltip-content .react-charts__tooltip-title {
+  color: #fcfeff;
+  display: block;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+.react-charts__tooltip__table {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.react-charts__tooltip__table__element-color {
+  translate: 0px 2px;
+}
+
+.react-charts__tooltip__table td {
+  padding: 2px;
+}
