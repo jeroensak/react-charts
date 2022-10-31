@@ -55,7 +55,7 @@ export const withChartWrapper =
     ChartChildren: React.ComponentType<ChartChildrenProps>,
     defaultOffset = { left: 45, top: 0, right: 0, bottom: 30 }
   ) =>
-  (props: ChartChildrenProps & ChartDimensionsProps & TooltipContentProps & offsetProp) => {
+  (props: ChartChildrenProps & ChartDimensionsProps & TooltipContentProps & offsetProp & { className?: string }) => {
     const { width = '100%' } = props;
     const [ref, { width: calculatedWidth, height: calculatedHeight }] = useMeasure();
     const [offset, setFullOffset] = React.useState<TOffset>({
@@ -81,7 +81,7 @@ export const withChartWrapper =
     );
 
     return (
-      <div ref={ref} style={{ width, height: props.height }}>
+      <div ref={ref} style={{ width, height: props.height }} className={props.className}>
         {calculatedHeight && calculatedWidth ? (
           <>
             <TooltipComponent>

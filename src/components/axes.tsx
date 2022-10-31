@@ -30,7 +30,7 @@ const defaultXAxisProps: (
       {formattedValue}
     </text>
   ),
-  tickFormat: (t) => dayjs(t).format('DD MMM'),
+  tickFormat: (t) => typeof t === 'object' ? dayjs(t).format('DD MMM') : t,
 });
 
 const defaultYAxisProps: (axisColor?: string, textColor?: string) => Partial<React.ComponentProps<typeof AxisLeft>> = (

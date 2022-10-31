@@ -27,7 +27,7 @@ interface StackedBarchartProps<DataType> extends ExternalAxesProps {
 
 interface RequiredDataProperties {
   [key: string]: any;
-  valueX: number;
+  valueX: any;
 }
 
 const StackedBarChartBase = <DataType extends RequiredDataProperties>({

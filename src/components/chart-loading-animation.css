@@ -1,0 +1,14 @@
+.react-charts__loading-chart {
+  opacity: 0.5;
+  animation: alternate infinite pulsing 1s;
+}
+
+@keyframes pulsing {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 0.8;
+  }
+}

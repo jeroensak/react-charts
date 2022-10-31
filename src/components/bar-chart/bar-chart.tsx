@@ -28,7 +28,7 @@ const barPadding = 0.4;
 
 export interface RequiredDataProperties {
   [key: string]: any;
-  valueX: number;
+  valueX: any;
 }
 
 const BarChartBase = <DataType extends RequiredDataProperties>({
