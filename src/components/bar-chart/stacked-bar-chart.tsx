@@ -1,14 +1,15 @@
 import { Group } from '@visx/group';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
-import { SafeSVG } from '../utils/safe-svg';
+import { SafeSVG } from '../../utils/safe-svg';
 import React, { ReactText } from 'react';
-import { highestValue } from '../utils/min-max';
-import { useChartDimensions, withChartWrapper } from './with-chart-wrapper';
+import { highestValue } from '../../utils/min-max';
+import { useChartDimensions, withChartWrapper } from '../with-chart-wrapper';
 import { BarStack } from '@visx/shape';
-import { TooltipCursor } from './tooltip/tooltip-cursor';
+import { TooltipCursor } from '../tooltip/tooltip-cursor';
 import { BarGroupBar, StackKey } from '@visx/shape/lib/types';
-import { Axes, ExternalAxesProps } from './axes';
-import { Legend } from './legend';
+import { Axes, ExternalAxesProps } from '../axes';
+import { Legend } from '../legend';
+import { TextWithBackground } from './text-with-background';
 
 interface StackedBarchartProps<DataType> extends ExternalAxesProps {
   data: DataType[];
@@ -20,6 +21,8 @@ interface StackedBarchartProps<DataType> extends ExternalAxesProps {
   barPadding?: number;
   hideTooltip?: boolean;
   hideLegend?: boolean;
+  hideBarText?: boolean;
+  barTextColor?: string;
 }
 
 interface RequiredDataProperties {
@@ -33,6 +36,9 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   barPadding = 0.4,
   hideTooltip,
   hideLegend,
+  hideBarText,
+  barTextColor,
+  numberFormatter,
   ...restProps
 }: Omit<StackedBarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const [barWidth, setBarWidth] = React.useState(0);
@@ -118,12 +124,23 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
             {(barStacks) =>
               barStacks.map((barStack) => {
                 return barStack.bars.map((bar) => (
-                  <Bar
-                    key={`bar-stack-${barStack.index}-${bar.index}`}
-                    bar={bar}
-                    setBarWidth={setBarWidth}
-                    barWidth={barWidth}
-                  />
+                  <React.Fragment key={`bar-stack-${barStack.index}-${bar.index}`}>
+                    <Bar bar={bar} setBarWidth={setBarWidth} barWidth={barWidth} />
+                    {!hideBarText && (
+                      <TextWithBackground
+                        x={bar.x + bar.width / 2}
+                        y={bar.y + bar.height / 2}
+                        width={bar.width}
+                        backgroundColor={bar.color}
+                        fill={barTextColor || 'white'}
+                        textAnchor="middle"
+                        style={{
+                          transform: 'translateY(5px)',
+                        }}>
+                        {numberFormatter ? numberFormatter(bar.bar.data[bar.key]) : bar.bar.data[bar.key]}
+                      </TextWithBackground>
+                    )}
+                  </React.Fragment>
                 ));
               })
             }
@@ -137,7 +154,7 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
           xAxisProps={restProps.xAxisProps}
           yAxisProps={restProps.yAxisProps}
           axisColor={restProps.axisColor}
-          numberFormatter={restProps.numberFormatter}
+          numberFormatter={numberFormatter}
           simplified={restProps.simplified}
           textColor={restProps.textColor}
         />

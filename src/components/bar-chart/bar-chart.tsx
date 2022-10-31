@@ -133,7 +133,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
                           fill={barTextColor || 'white'}
                           textAnchor="middle"
                           style={{
-                            transform: 'translateY(0.5rem)',
+                            transform: 'translateY(5px)',
                           }}>
                           {numberFormatter ? numberFormatter(bar.value) : bar.value}
                         </TextWithBackground>

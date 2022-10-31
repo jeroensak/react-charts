@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import dayjs from 'dayjs';
-import { StackedBarChart as StackedBarChartComponent } from '../components/stacked-bar-chart';
+import { StackedBarChart as StackedBarChartComponent } from '../components/bar-chart/stacked-bar-chart';
 
 const bars = [
   { accessor: 'value', color: '#008F96', label: 'value' },
@@ -50,6 +50,10 @@ export default {
     height: {
       control: 'string',
       defaultValue: '400px',
+    },
+    hideBarText: {
+      control: 'boolean',
+      defaultValue: false,
     },
   },
 } as ComponentMeta<typeof StackedBarChartComponent>;
