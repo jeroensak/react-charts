@@ -51,6 +51,10 @@ export default {
       control: 'string',
       defaultValue: '400px',
     },
+    hideBarText: {
+      control: 'boolean',
+      defaultValue: false,
+    },
   },
 } as ComponentMeta<typeof BarChartComponent>;
 

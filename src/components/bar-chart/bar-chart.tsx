@@ -20,6 +20,8 @@ interface BarchartProps<DataType> extends ExternalAxesProps {
   axisColor?: string;
   textColor?: string;
   hideLegend?: boolean;
+  hideBarText?: boolean;
+  barTextColor?: string;
 }
 
 const barPadding = 0.4;
@@ -37,6 +39,8 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   numberFormatter,
   axisColor,
   hideLegend,
+  hideBarText,
+  barTextColor,
   ...restProps
 }: Omit<BarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
@@ -120,18 +124,20 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
                         fill={bar.color}
                         stroke="none"
                       />
-                      <TextWithBackground
-                        x={bar.x + bar.width / 2}
-                        y={bar.y + bar.height / 2}
-                        width={bar.width}
-                        backgroundColor={bar.color}
-                        fill={'white'}
-                        textAnchor="middle"
-                        style={{
-                          transform: 'translateY(0.5rem)',
-                        }}>
-                        {numberFormatter ? numberFormatter(bar.value) : bar.value}
-                      </TextWithBackground>
+                      {!hideBarText && (
+                        <TextWithBackground
+                          x={bar.x + bar.width / 2}
+                          y={bar.y + bar.height / 2}
+                          width={bar.width}
+                          backgroundColor={bar.color}
+                          fill={barTextColor || 'white'}
+                          textAnchor="middle"
+                          style={{
+                            transform: 'translateY(0.5rem)',
+                          }}>
+                          {numberFormatter ? numberFormatter(bar.value) : bar.value}
+                        </TextWithBackground>
+                      )}
                     </React.Fragment>
                   ))}
                 </Group>
