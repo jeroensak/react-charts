@@ -21,7 +21,7 @@ const TooltipInPortalContent = ({ children }: { children: React.ReactNode | Reac
   );
 
   const isOutOfBoundsLeft = Boolean(
-    tooltipRef.current && tooltipRef.current.getBoundingClientRect().left - tooltipRef.current.clientWidth < 0
+    tooltipRef.current && tooltipRef.current.getBoundingClientRect().left - (tooltipRef.current.clientWidth / 2) < 0
   );
 
   React.useEffect(() => {
