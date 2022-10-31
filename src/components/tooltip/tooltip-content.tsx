@@ -36,7 +36,7 @@ const TooltipInPortalContent = ({ children }: { children: React.ReactNode | Reac
 
   return (
     // center the div at the same x as the tooltip (centered above the hovered data entry)
-    <div ref={tooltipRef} style={{ transform: 'translateX(calc(-50% - 0.1rem))' }}>
+    <div ref={tooltipRef} style={{ transform: 'translateX(calc(-50% - 1px))' }}>
       {children}
     </div>
   );
