@@ -1,7 +1,9 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import './light-theme-tooltip/light-theme-tooltip.css';
 import dayjs from 'dayjs';
-import { LineChart as LineChartComponent } from '../components/line-chart';
+import { LineChart } from '../components/line-chart';
+import { LightThemeTooltip } from './light-theme-tooltip/light-theme-tooltip';
 
 const lines = [
   { accessor: 'value', color: '#008F96', label: 'value' },
@@ -21,8 +23,8 @@ const data = [
 ];
 
 export default {
-  title: 'Line Chart',
-  component: LineChartComponent,
+  title: 'Light Tooltip',
+  component: LineChart,
   parameters: {
     layout: 'fullscreen',
   },
@@ -66,12 +68,22 @@ export default {
       defaultValue: true,
     },
   },
-} as ComponentMeta<typeof LineChartComponent>;
+} as ComponentMeta<typeof LineChart>;
 
-const LineChartTemplate: ComponentStory<typeof LineChartComponent> = (args) => (
-  <div style={{ marginTop: '80px', padding: '20px' }}>
-    <LineChartComponent {...args} />
-  </div>
-);
+const LightTooltipTemplate: ComponentStory<typeof LineChart> = (args) => {
+  React.useEffect(() => {
+    document.body.classList.add('light-tooltip');
 
-export const LineChart = LineChartTemplate.bind({});
+    return () => {
+      document.body.classList.remove('light-tooltip');
+    };
+  }, []);
+
+  return (
+    <div style={{ marginTop: '80px', padding: '20px' }}>
+      <LineChart {...args} tooltipContent={LightThemeTooltip} />
+    </div>
+  );
+};
+
+export const LightTooltip = LightTooltipTemplate.bind({});
