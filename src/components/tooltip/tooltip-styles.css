@@ -17,7 +17,7 @@
   translate: 50% -100%;
 }
 
-.react-charts__tooltip-content .react-charts__tooltip-title {
+.react-charts__tooltip-title {
   color: #fcfeff;
   display: block;
   margin-bottom: 8px;

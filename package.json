@@ -1,6 +1,7 @@
 {
   "name": "react-charts",
   "private": false,
+  "version": "1.0.0",
   "scripts": {
     "typecheck": "tsc --noEmit --strict",
     "storybook": "start-storybook -p 6006",
