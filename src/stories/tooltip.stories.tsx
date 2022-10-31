@@ -11,9 +11,6 @@ const lines = [
 ];
 
 const data = [
-  { value: 9, otherValue: 3, date: dayjs().startOf('day').subtract(8, 'days').toDate() },
-  { value: 4, otherValue: 4, date: dayjs().startOf('day').subtract(7, 'days').toDate() },
-  { value: 3, otherValue: 5, date: dayjs().startOf('day').subtract(6, 'days').toDate() },
   { value: 6, otherValue: 6, date: dayjs().startOf('day').subtract(5, 'days').toDate() },
   { value: 4, otherValue: 5, date: dayjs().startOf('day').subtract(4, 'days').toDate() },
   { value: 4, otherValue: 4, date: dayjs().startOf('day').subtract(3, 'days').toDate() },
@@ -59,6 +56,12 @@ export default {
         tickValues: [2, 4, 6, 8],
       },
     },
+    xAxisProps: {
+      control: 'object',
+      defaultValue: {
+        numTicks: 6,
+      },
+    },
     showXGridLines: {
       control: 'boolean',
       defaultValue: false,
@@ -82,6 +85,70 @@ const LightTooltipTemplate: ComponentStory<typeof LineChart> = (args) => {
   return (
     <div style={{ marginTop: '80px', padding: '20px' }}>
       <LineChart {...args} tooltipContent={LightThemeTooltip} />
+      <h3 style={{ marginTop: '40px' }}>CSS for tooltip:</h3>
+      <pre>
+        {`/* Default classes on a tooltip */
+.react-charts__tooltip-content {
+  background: white;
+  border-color: #ddd;
+  color: #333;
+  width: 150px;
+  position: relative;
+  padding: 12px;
+}
+
+.react-charts__tooltip-content::after {
+  width: 13px;
+  height: 13px;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -6px 8px;
+  rotate: 0.125turn;
+  z-index: 1;
+  background-color: white;
+  content: '';
+}
+
+/* out-of-bounds classes are added dynamically by default */
+.out-of-bounds--right .react-charts__tooltip-content {
+  translate: calc(-50% + 20px) -100%;
+}
+
+.out-of-bounds--right .react-charts__tooltip-content::after {
+  left: calc(100% - 19px);
+}
+
+.out-of-bounds--left .react-charts__tooltip-content {
+  translate: calc(50% - 20px) -100%;
+}
+
+.out-of-bounds--left .react-charts__tooltip-content::after {
+  left: 19px;
+}
+
+
+
+/* custom classes added for styling in the tooltipContent prop */
+.title {
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.chart-element {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.chart-element__label {
+  border-bottom: 2px solid;
+}
+`}
+      </pre>
     </div>
   );
 };
