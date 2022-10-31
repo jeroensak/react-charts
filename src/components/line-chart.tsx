@@ -1,4 +1,3 @@
-import { AxisBottom, AxisLeft } from '@visx/axis';
 import { ClipPath } from '@visx/clip-path';
 import { Group } from '@visx/group';
 import { scaleLinear, scaleTime } from '@visx/scale';
@@ -7,11 +6,10 @@ import React, { useId } from 'react';
 import { useChartDimensions, withChartWrapper } from './with-chart-wrapper';
 import { SafeSVG } from '../utils/safe-svg';
 import { LinearGradient } from '@visx/gradient';
-import dayjs from 'dayjs';
 import { getMinMaxWithPadding } from '../utils/min-max';
 import { TooltipCursor } from './tooltip/tooltip-cursor';
-import { LegendOrdinal } from '@visx/legend';
-import { scaleOrdinal } from '@visx/scale';
+import { Axes, ExternalAxesProps } from './axes';
+import { Legend } from './legend';
 
 export interface RequiredDataProperties {
   [key: string]: any;
@@ -26,68 +24,30 @@ export interface LineMeta {
   dotted?: boolean;
 }
 
-export interface LineChartProps<DataType> {
+export interface LineChartProps<DataType> extends ExternalAxesProps {
   lines: LineMeta[];
   data: DataType[];
-  xAxisProps?: Partial<React.ComponentProps<typeof AxisBottom>>;
-  yAxisProps?: Partial<React.ComponentProps<typeof AxisLeft>>;
-  simplified?: boolean;
   hideTooltip?: boolean;
   hideLegend?: boolean;
   countScaleDomain?: [number, number];
   timeScaleDomain?: [Date, Date];
-  numberFormatter?: (value: number | bigint) => string;
-  axisColor?: string;
-  textColor?: string;
   showXGridLines?: boolean;
   showYGridLines?: boolean;
 }
-
-const defaultXAxisProps: (
-  axisColor?: string,
-  textColor?: string
-) => Partial<React.ComponentProps<typeof AxisBottom>> = (axisColor?: string, textColor?: string) => ({
-  stroke: axisColor,
-  tickStroke: axisColor,
-  tickLength: 3,
-  tickComponent: ({ formattedValue, ...props }) => (
-    <text {...props} fontSize={12} transform="translate(-5)" fill={textColor}>
-      {formattedValue}
-    </text>
-  ),
-  tickFormat: (t) => dayjs(t).format('DD MMM'),
-});
-
-const defaultYAxisProps: (axisColor?: string, textColor?: string) => Partial<React.ComponentProps<typeof AxisLeft>> = (
-  axisColor?: string,
-  textColor?: string
-) => ({
-  stroke: axisColor,
-  tickStroke: axisColor,
-  tickLength: 3,
-  numTicks: 4,
-  tickComponent: ({ formattedValue, ...props }) => (
-    <text {...props} fontSize={12} fill={textColor}>
-      {formattedValue}
-    </text>
-  ),
-});
 
 const LineChartBase = <DataType extends RequiredDataProperties>({
   lines,
   data,
   xAxisProps,
   yAxisProps,
-  simplified,
   hideTooltip,
   hideLegend,
   timeScaleDomain,
   countScaleDomain,
-  numberFormatter,
   axisColor = '#07080A',
-  textColor = '#07080A',
   showXGridLines,
   showYGridLines,
+  ...restProps
 }: Omit<LineChartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const id = useId();
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
@@ -145,11 +105,6 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
       .map((v) => countScale(v))
       .filter((v) => v !== 0 && v !== innerChartHeight);
   }, [showYGridLines, countScale, offset.left, outerChartWidth]);
-
-  const ordinalColorScale = scaleOrdinal({
-    domain: lines.map((l) => l.label),
-    range: lines.map((l) => l.color),
-  });
 
   return (
     <div style={{ position: 'relative' }}>
@@ -233,30 +188,20 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
           })}
           {!hideTooltip && <TooltipCursor data={dataForTooltip} xScale={timeScale} yScale={countScale} />}
         </Group>
-        <AxisLeft
-          left={offset.left}
-          scale={countScale}
-          {...defaultYAxisProps(axisColor, textColor)}
-          tickValues={simplified ? countScale.domain() : defaultYAxisProps(axisColor, textColor).tickValues}
-          tickStroke={simplified ? 'transparent' : defaultYAxisProps(axisColor, textColor).tickStroke}
-          tickFormat={numberFormatter}
-          {...yAxisProps}
-        />
-        <AxisBottom
-          top={innerChartHeight}
-          left={offset.left}
-          scale={timeScale}
-          {...defaultXAxisProps(axisColor, textColor)}
-          tickValues={simplified ? timeScale.domain() : defaultXAxisProps(axisColor, textColor).tickValues}
-          tickStroke={simplified ? 'transparent' : defaultXAxisProps(axisColor, textColor).tickStroke}
-          {...xAxisProps}
+        <Axes
+          xAxisScale={timeScale}
+          yAxisScale={countScale}
+          offsetLeft={offset.left}
+          xAxisTopOffset={innerChartHeight}
+          xAxisProps={xAxisProps}
+          yAxisProps={yAxisProps}
+          axisColor={axisColor}
+          numberFormatter={restProps.numberFormatter}
+          simplified={restProps.simplified}
+          textColor={restProps.textColor}
         />
       </SafeSVG>
-      {!hideLegend && (
-        <div style={{ paddingLeft: offset.left }}>
-          <LegendOrdinal scale={ordinalColorScale} direction="row" labelMargin="0 20px 0 0" />
-        </div>
-      )}
+      {!hideLegend && <Legend elements={lines} offsetLeft={offset.left} />}
     </div>
   );
 };
