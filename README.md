@@ -4,6 +4,11 @@ Basic charts components to be used in a react project. Charts are based on [visx
 These charts are simple wrappers to make it easier to quickly implement re-usable charts while still being customizable.
 All charts are rendered as svg and directly usable in React.
 
+# Installation
+Install the package with `npm install @js/react-charts --save` or `yarn add @js/react-charts`.
+
+Add the optional styling for the tooltip and chart loading animation by importing `@js/react-charts/styles.css`.
+
 # Charts
 
 Currently available charts are a line chart, bar chart and stacked bar chart.

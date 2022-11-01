@@ -3,7 +3,6 @@ import { useChartDimensions } from '../with-chart-wrapper';
 // import { TooltipDataEntry } from '../chart-types';
 import { useChartTooltip } from './tooltip-context';
 import React from 'react';
-import './tooltip-styles.css';
 
 export interface TooltipContentProps {
   tooltipContent?: (tooltipData: any[]) => React.ReactNode;

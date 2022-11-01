@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { BarChart } from './bar-chart/bar-chart';
 import { StackedBarChart } from './bar-chart/stacked-bar-chart';
-import './chart-loading-animation.css';
 import { LineChart } from './line-chart';
 
 const elements = [{ accessor: 'value', color: '#6E7884', label: '...' }];

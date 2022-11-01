@@ -1,5 +1,6 @@
 import { LegendOrdinal } from '@visx/legend';
 import { scaleOrdinal } from '@visx/scale';
+import React from 'react';
 
 export const Legend = ({ offsetLeft, elements }: { offsetLeft: number; elements: { color: string; label: string }[] }) => {
 

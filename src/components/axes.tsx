@@ -1,6 +1,7 @@
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { ScaleBand, ScaleLinear, ScaleTime } from 'd3-scale';
 import dayjs from 'dayjs';
+import React from 'react';
 
 export interface ExternalAxesProps {
   xAxisProps?: Partial<React.ComponentProps<typeof AxisBottom>>;
