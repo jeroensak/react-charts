@@ -23,11 +23,13 @@ interface StackedBarchartProps<DataType> extends ExternalAxesProps {
   hideLegend?: boolean;
   hideBarText?: boolean;
   barTextColor?: string;
+  xScaleDomain?: [string, string] | [number, number] | [Date, Date];
+  yScaleDomain?: [number, number];
+  xAccessor?: string;
 }
 
 interface RequiredDataProperties {
   [key: string]: any;
-  valueX: any;
 }
 
 const StackedBarChartBase = <DataType extends RequiredDataProperties>({
@@ -39,6 +41,9 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   hideBarText,
   barTextColor,
   numberFormatter,
+  xAccessor = 'valueX',
+  xScaleDomain,
+  yScaleDomain,
   ...restProps
 }: Omit<StackedBarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const [barWidth, setBarWidth] = React.useState(0);
@@ -57,12 +62,12 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
 
   const timeScale = React.useMemo(
     () =>
-      scaleBand<number>({
-        domain: data.map((d) => d.valueX),
+      scaleBand<number | string | Date>({
+        domain: xScaleDomain || data.map((d) => d[xAccessor]),
         padding: barPadding,
         range: [0, innerChartWidth],
       }),
-    [barPadding, data, innerChartWidth]
+    [barPadding, data, innerChartWidth, xScaleDomain, xAccessor]
   );
 
   const { colorScale } = React.useMemo(
@@ -76,8 +81,8 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const countScale = React.useMemo(
-    () => scaleLinear({ domain: [0, yMax * 1.1], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax]
+    () => scaleLinear({ domain: yScaleDomain || [0, yMax * 1.1], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yScaleDomain]
   );
 
   const dataForTooltip = React.useMemo(() => {
@@ -88,7 +93,7 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
           ...curr,
           data: data.map((a) => ({
             value: a[curr.accessor] ?? 0,
-            time: a.valueX,
+            time: a[xAccessor],
           })),
           xAccessor: 'time',
           yAccessor: 'value',
@@ -97,7 +102,7 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
         },
       };
     }, {} as any);
-  }, [bars, data, timeScale, countScale]);
+  }, [bars, data, timeScale, countScale, xAccessor]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -117,7 +122,7 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
             data={data}
             keys={bars.map((a) => a.accessor)}
             height={innerChartHeight}
-            x={(d) => d.valueX}
+            x={(d) => d[xAccessor]}
             xScale={timeScale}
             yScale={countScale}
             color={colorScale}>

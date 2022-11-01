@@ -22,13 +22,15 @@ interface BarchartProps<DataType> extends ExternalAxesProps {
   hideLegend?: boolean;
   hideBarText?: boolean;
   barTextColor?: string;
+  xScaleDomain?: [string, string] | [number, number] | [Date, Date];
+  xAccessor?: string;
+  yScaleDomain?: [number, number];
 }
 
 const barPadding = 0.4;
 
 export interface RequiredDataProperties {
   [key: string]: any;
-  valueX: any;
 }
 
 const BarChartBase = <DataType extends RequiredDataProperties>({
@@ -41,6 +43,9 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   hideLegend,
   hideBarText,
   barTextColor,
+  xAccessor = 'valueX',
+  xScaleDomain,
+  yScaleDomain,
   ...restProps
 }: Omit<BarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
@@ -50,11 +55,11 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   const xAxisScale = useMemo(
     () =>
       scaleBand<number>({
-        domain: data.map((d) => d.valueX),
+        domain: xScaleDomain || data.map((d) => d[xAccessor]),
         padding: barPadding,
         range: [0, innerChartWidth],
       }),
-    [data, innerChartWidth]
+    [data, innerChartWidth, xScaleDomain, xAccessor]
   );
 
   const { colorScale, accessorScale } = React.useMemo(
@@ -73,8 +78,8 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const countScale = useMemo(
-    () => scaleLinear({ domain: [0, yMax], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax]
+    () => scaleLinear({ domain: yScaleDomain || [0, yMax], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yScaleDomain]
   );
 
   const dataForTooltip = React.useMemo(() => {
@@ -85,7 +90,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
           ...curr,
           data: data.map((a) => ({
             value: a[curr.accessor],
-            time: a.valueX,
+            time: a[xAccessor],
           })),
           xAccessor: 'time',
           yAccessor: 'value',
@@ -94,7 +99,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
         },
       };
     }, {} as any);
-  }, [bars, data, xAxisScale, countScale]);
+  }, [bars, data, xAxisScale, countScale, xAccessor]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -104,7 +109,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
             data={data}
             keys={bars.map((a) => a.accessor)}
             height={innerChartHeight}
-            x0={(d) => d.valueX}
+            x0={(d) => d[xAccessor]}
             x0Scale={xAxisScale}
             x1Scale={accessorScale}
             yScale={countScale}

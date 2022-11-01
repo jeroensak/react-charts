@@ -9,15 +9,15 @@ const bars = [
 ];
 
 const data = [
-  { value: 9, otherValue: 3, valueX: dayjs().startOf('day').subtract(8, 'days').toDate() },
-  { value: 4, otherValue: 4, valueX: dayjs().startOf('day').subtract(7, 'days').toDate() },
-  { value: 3, otherValue: 5, valueX: dayjs().startOf('day').subtract(6, 'days').toDate() },
-  { value: 6, otherValue: 6, valueX: dayjs().startOf('day').subtract(5, 'days').toDate() },
-  { value: 4, otherValue: 5, valueX: dayjs().startOf('day').subtract(4, 'days').toDate() },
-  { value: 4, otherValue: 4, valueX: dayjs().startOf('day').subtract(3, 'days').toDate() },
-  { value: 3, otherValue: 5, valueX: dayjs().startOf('day').subtract(2, 'days').toDate() },
-  { value: 5, otherValue: 6, valueX: dayjs().startOf('day').subtract(1, 'days').toDate() },
-  { value: 1, otherValue: 8, valueX: dayjs().startOf('day').toDate() },
+  { value: 9, otherValue: 3, x: dayjs().startOf('day').subtract(8, 'days').toDate() },
+  { value: 4, otherValue: 4, x: dayjs().startOf('day').subtract(7, 'days').toDate() },
+  { value: 3, otherValue: 5, x: dayjs().startOf('day').subtract(6, 'days').toDate() },
+  { value: 6, otherValue: 6, x: dayjs().startOf('day').subtract(5, 'days').toDate() },
+  { value: 4, otherValue: 5, x: dayjs().startOf('day').subtract(4, 'days').toDate() },
+  { value: 4, otherValue: 4, x: dayjs().startOf('day').subtract(3, 'days').toDate() },
+  { value: 3, otherValue: 5, x: dayjs().startOf('day').subtract(2, 'days').toDate() },
+  { value: 5, otherValue: 6, x: dayjs().startOf('day').subtract(1, 'days').toDate() },
+  { value: 1, otherValue: 8, x: dayjs().startOf('day').toDate() },
 ];
 
 export default {
@@ -54,6 +54,10 @@ export default {
     hideBarText: {
       control: 'boolean',
       defaultValue: false,
+    },
+    xAccessor: {
+      control: 'string',
+      defaultValue: 'x',
     },
   },
 } as ComponentMeta<typeof StackedBarChartComponent>;
