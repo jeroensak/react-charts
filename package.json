@@ -1,5 +1,5 @@
 {
-  "name": "@js/react-charts",
+  "name": "@jeroensak/react-charts",
   "private": false,
   "version": "1.0.0",
   "main": "./lib/cjs/index.js",
@@ -7,6 +7,10 @@
   "types": "./lib/esm/index.d.ts",
   "type": "module",
   "author": "Jeroen Sak",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeroensak/react-charts"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit --strict",
     "storybook": "start-storybook -p 6006",
