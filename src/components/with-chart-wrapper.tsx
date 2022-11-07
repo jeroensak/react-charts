@@ -1,5 +1,6 @@
 import React, { SVGAttributes } from 'react';
 import useMeasure from 'react-use-measure';
+import { ReactChartsConfigContext } from './react-charts-config';
 import { TooltipComponent } from './tooltip/tooltip-component';
 import { TooltipContent, TooltipContentProps } from './tooltip/tooltip-content';
 
@@ -62,6 +63,7 @@ export const withChartWrapper =
       ...defaultOffset,
       ...props.offset,
     });
+    const defaultChartConfig = React.useContext(ReactChartsConfigContext);
 
     const setOffset = React.useCallback(
       (newOffset: Partial<TOffset>) => setFullOffset((v) => ({ ...v, ...newOffset })),
@@ -86,7 +88,7 @@ export const withChartWrapper =
           <>
             <TooltipComponent>
               <ChartDimensionsContext.Provider value={value}>
-                <ChartChildren {...props} />
+                <ChartChildren {...defaultChartConfig} {...props} />
                 <TooltipContent
                   tooltipContent={props.tooltipContent}
                   tooltipTitle={props.tooltipTitle}

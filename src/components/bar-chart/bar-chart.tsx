@@ -39,6 +39,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   axisColor = '#07080A',
   hideLegend,
   hideBarText,
+  hideTooltip,
   barTextColor,
   xAccessor = 'valueX',
   xScaleDomain,
@@ -106,8 +107,6 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
     innerChartHeight
   );
 
-  console.log(yGridValues);
-
   return (
     <div style={{ position: 'relative' }}>
       <SafeSVG width={outerChartWidth} height={outerChartHeight}>
@@ -167,13 +166,15 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
               ));
             }}
           </BarGroup>
-          <TooltipCursor
-            translateX={(barWidth * bars.length) / 2}
-            data={dataForTooltip}
-            xScale={xAxisScale}
-            yScale={countScale}
-            invisibleCursor
-          />
+          {!hideTooltip && (
+            <TooltipCursor
+              translateX={(barWidth * bars.length) / 2}
+              data={dataForTooltip}
+              xScale={xAxisScale}
+              yScale={countScale}
+              invisibleCursor
+            />
+          )}
         </Group>
         <Axes
           xAxisScale={xAxisScale}

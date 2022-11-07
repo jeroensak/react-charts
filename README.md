@@ -4,22 +4,29 @@ Basic charts components to be used in a react project. Charts are based on [visx
 These charts are simple wrappers to make it easier to quickly implement re-usable charts while still being customizable.
 All charts are rendered as svg and directly usable in React.
 
-# Installation
+<br />
+
+## Installation
+
 Install the package with `npm install @js/react-charts --save` or `yarn add @js/react-charts`.
 
 Add the optional styling for the tooltip and chart loading animation by importing `@js/react-charts/styles.css`.
 
-# Charts
+<br />
+
+## Charts
 
 Currently available charts are a line chart, bar chart and stacked bar chart.
 
-# Props
+<br />
 
-## Required
+## Props
+
+### Required
 
 Required are only the height of the chart, the data and the elements (lines for line chart, bars for (stacked) bar chart).
 
-### Data
+#### Data
 
 The data prop accepts an array of objects aggregated and sorted on dates.
 
@@ -37,7 +44,7 @@ example:
 }]
 ```
 
-### Elements
+#### Elements
 
 The lines or bars prop accepts an array of objects containing the accessor, label and color.
 
@@ -55,31 +62,39 @@ example:
 }]
 ```
 
-### Height
+#### Height
 
 The height defines the total height of the chart, including the axes.
 
-## Optional
+### Optional
 
 There are multiple shared optional props like -but not excluded to- the width; hiding the legend, tooltip or bar text; axis and text colors; tooltip content; and deeper axis and tooltip props for customizing.
 
-### Width
+#### Width
 
 The width defines the total width of the chart, including the axes.
 
-### Tooltip props
+#### Tooltip props
 
 You can hide the tooltip with `hideTooltip` or replace the content of the tooltip with a custom component on `tooltipContent`. The component will receive the hovered data. If you need extra data in the tooltip that you don't want to show in the chart, you can add those attributes to the `data` prop on the chart, but leaving out a chart element for it.
 
-### Axis props
+#### Axis props
 
 all axis props supported by visx (https://airbnb.io/visx/docs/axis) are supported. Add the props as attributes to an object and pass them as `yAxisProps` or `xAxisProps`. These will overwrite default props.
 
-### Other props
+#### Other props
 
 All other currently available props are showed in storybook.
 
-# Placeholder
+<br />
+
+## High level config
+
+To provide a set of props for all charts within (a part of) the application, a `ReactChartsConfigProvider` and `ReactChartsConfigContext` are available. It accepts a set of props that will be used by all charts by default. These props are still overwrite-able for individual charts.
+
+<br />
+
+## Placeholder
 
 A simple placeholder wrapper is available as the `ChartLoadingAnimation` component. This component shows a simple placeholder with fake data, pulsing. Easily replacable by custom placeholders.
 
@@ -93,11 +108,13 @@ example:
 )}
 ```
 
-# Tooltip styles
+<br />
+
+## Tooltip styles
 
 The tooltip can be styled using only the existing css classes without having to add a custom `tooltipComponent` to every chart.
 
-## Available css classes
+### Available css classes
 
 `.react-charts__tooltip-content`
 
@@ -107,7 +124,7 @@ The tooltip can be styled using only the existing css classes without having to 
 
 `.react-charts__tooltip__table__element-color`
 
-## Out of bounds
+### Out of bounds
 
 If the tooltip is going out of bounds it is aligned differently to always be visible. For custom styling the follow css classes can be addressed.
 
@@ -115,7 +132,9 @@ If the tooltip is going out of bounds it is aligned differently to always be vis
 
 `.out-of-bounds--left`
 
-# Storybook
+<br />
+
+## Storybook
 
 To start storybook clone this package. Run `npm install` or `yarn` to install the packages.
 
