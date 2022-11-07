@@ -83,10 +83,12 @@ export const TooltipCursor = ({
             if (!chartElement) return null;
             let nearestIndex = 0;
 
-            if (isBarChart)
+            if (isBarChart) {
               nearestIndex = chartElement.data.findIndex(
-                (entry: any) => entry[chartElement.xAccessor] === xValueForLocalPoint
+                (entry: any) => entry?.[chartElement.xAccessor] === xValueForLocalPoint
               );
+              if (nearestIndex === -1) nearestIndex = chartElement.data.length - 1;
+            }
 
             if (isLineChart) {
               const bisectX = bisector((item: { [key: string]: any }) => item[chartElement.xAccessor]).center;
@@ -105,8 +107,8 @@ export const TooltipCursor = ({
                 ((typeof chartElement.y === 'function'
                   ? chartElement.y(dataPoint, nearestIndex, chartElement.data)
                   : chartElement.y) || 0) + translateY,
-              valueX: dataPoint[chartElement.xAccessor],
-              valueY: dataPoint[chartElement.yAccessor],
+              valueX: dataPoint?.[chartElement.xAccessor],
+              valueY: dataPoint?.[chartElement.yAccessor],
               color: chartElement.color,
               label: chartElement.label,
               index: nearestIndex,
