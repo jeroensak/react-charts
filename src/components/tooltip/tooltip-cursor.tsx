@@ -25,7 +25,7 @@ export const TooltipCursor = ({
   invisibleCursor?: boolean;
   tooltipXOffset?: number;
   lineWidth?: number;
-  data: {date: Date};
+  data: { date: Date };
   xScale: AxisScale;
   yScale: AxisScale;
   translateX?: number;
@@ -45,13 +45,16 @@ export const TooltipCursor = ({
         // Depending in the axis type we need to get the xvalue in a different way.
         let xValueForLocalPoint: unknown = null;
 
+        const isLineChart = 'invert' in xScale;
+        const isBarChart = 'step' in xScale;
+
         // If invert property is on xScale, getting the value is easy.
-        if ('invert' in xScale) {
+        if (isLineChart) {
           xValueForLocalPoint = xScale.invert(correctedX);
         }
 
         // If the 'step' property is in the scale, it is a bar element.
-        if ('step' in xScale) {
+        if (isBarChart) {
           const step = xScale.step();
           let bar = Math.round((correctedX + xScale.padding() * step) / step);
           if (bar === 0) bar = 1; // correct for the margin left to the first bar
@@ -76,25 +79,38 @@ export const TooltipCursor = ({
         const tooltipDataPoints = Object.keys(data)
           .map((dataKey) => {
             // @ts-ignore
-            const line = data[dataKey]; // todo: tsignore
-            if (!line) return null;
-            const bisectX = bisector((item: { [key: string]: any }) => item[line.xAccessor]).center;
-            const nearestIndex = bisectX(line.data, xValueForLocalPoint);
+            const chartElement = data[dataKey]; // todo: tsignore
+            if (!chartElement) return null;
+            let nearestIndex = 0;
 
-            const dataPoint = line.data[nearestIndex];
-            // Creates a TooltipDataEntry for each line, passed onto the tooltipdata
+            if (isBarChart)
+              nearestIndex = chartElement.data.findIndex(
+                (entry: any) => entry[chartElement.xAccessor] === xValueForLocalPoint
+              );
+
+            if (isLineChart) {
+              const bisectX = bisector((item: { [key: string]: any }) => item[chartElement.xAccessor]).center;
+              nearestIndex = bisectX(chartElement.data, xValueForLocalPoint);
+            }
+
+            const dataPoint = chartElement.data[nearestIndex];
+            // Creates a TooltipDataEntry for each chartElement, passed onto the tooltipdata
             // in the tooltip context.
             return {
               x:
-                ((typeof line.x === 'function' ? line.x(dataPoint, nearestIndex, line.data) : line.x) || 0) +
-                translateX,
-              y: ((typeof line.y === 'function' ? line.y(dataPoint, nearestIndex, line.data) : line.y) || 0) + translateY,
-              valueX: dataPoint[line.xAccessor],
-              valueY: dataPoint[line.yAccessor],
-              color: line.color,
-              label: line.label,
+                ((typeof chartElement.x === 'function'
+                  ? chartElement.x(dataPoint, nearestIndex, chartElement.data)
+                  : chartElement.x) || 0) + translateX,
+              y:
+                ((typeof chartElement.y === 'function'
+                  ? chartElement.y(dataPoint, nearestIndex, chartElement.data)
+                  : chartElement.y) || 0) + translateY,
+              valueX: dataPoint[chartElement.xAccessor],
+              valueY: dataPoint[chartElement.yAccessor],
+              color: chartElement.color,
+              label: chartElement.label,
               index: nearestIndex,
-              inactive: line.inactive,
+              inactive: chartElement.inactive,
             };
           })
           // Remove any null values, which are the result of lines that somehow didn't have any data.
