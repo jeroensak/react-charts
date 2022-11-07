@@ -53,7 +53,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   const yMax = useMemo(() => highestValue(data, ...bars.map((a) => a.accessor)), [data, bars]);
   const xAxisScale = useMemo(
     () =>
-      scaleBand<number>({
+      scaleBand<number | string | Date>({
         domain: xScaleDomain || data.map((d) => d[xAccessor]),
         padding: barPadding,
         range: [0, innerChartWidth],
@@ -76,7 +76,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
     [bars, xAxisScale]
   );
 
-  const countScale = useMemo(
+  const yAxisScale = useMemo(
     () => scaleLinear({ domain: yScaleDomain || [0, yMax], range: [innerChartHeight, 0] }),
     [innerChartHeight, yMax, yScaleDomain]
   );
@@ -94,16 +94,16 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
           xAccessor: 'time',
           yAccessor: 'value',
           x: (d: DataType) => xAxisScale(d.time) ?? 0,
-          y: (d: DataType) => countScale(d.value || 0),
+          y: (d: DataType) => yAxisScale(d.value || 0),
         },
       };
     }, {} as any);
-  }, [bars, data, xAxisScale, countScale, xAccessor]);
+  }, [bars, data, xAxisScale, yAxisScale, xAccessor]);
 
   const yGridValues = useYGridValues(
     !!showYGridLines,
-    yAxisProps?.tickValues || countScale.ticks(),
-    countScale,
+    yAxisProps?.tickValues || yAxisScale.ticks(),
+    yAxisScale,
     innerChartHeight
   );
 
@@ -129,7 +129,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
             x0={(d) => d[xAccessor]}
             x0Scale={xAxisScale}
             x1Scale={accessorScale}
-            yScale={countScale}
+            yScale={yAxisScale}
             color={colorScale}>
             {(barGroups) => {
               setBarWidth(barGroups?.[0]?.bars?.[0]?.width || 0);
@@ -171,14 +171,14 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
               translateX={(barWidth * bars.length) / 2}
               data={dataForTooltip}
               xScale={xAxisScale}
-              yScale={countScale}
+              yScale={yAxisScale}
               invisibleCursor
             />
           )}
         </Group>
         <Axes
           xAxisScale={xAxisScale}
-          yAxisScale={countScale}
+          yAxisScale={yAxisScale}
           offsetLeft={offset.left}
           xAxisTopOffset={innerChartHeight}
           xAxisProps={xAxisProps}
