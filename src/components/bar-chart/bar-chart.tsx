@@ -3,31 +3,27 @@ import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import React, { ReactText, useMemo } from 'react';
 import { TextWithBackground } from './text-with-background';
 import { useChartDimensions, withChartWrapper } from '../with-chart-wrapper';
-import { BarGroup } from '@visx/shape';
+import { BarGroup, Line } from '@visx/shape';
 import { TooltipCursor } from '../tooltip/tooltip-cursor';
 import { highestValue } from '../../utils/min-max';
 import { SafeSVG } from '../../utils/safe-svg';
 import { Axes, ExternalAxesProps } from '../axes';
 import { Legend } from '../legend';
+import { GeneralChartProps } from '../../chart.interface';
+import { useYGridValues } from '../../utils/use-grid-values';
 
-interface BarchartProps<DataType> extends ExternalAxesProps {
+interface BarchartProps<DataType> extends ExternalAxesProps, GeneralChartProps {
   data?: DataType[];
   bars: {
     accessor: string;
     color: string;
     label: string;
   }[];
-  axisColor?: string;
-  textColor?: string;
-  hideLegend?: boolean;
   hideBarText?: boolean;
   barTextColor?: string;
-  xScaleDomain?: [string, string] | [number, number] | [Date, Date];
   xAccessor?: string;
-  yScaleDomain?: [number, number];
+  barPadding?: number;
 }
-
-const barPadding = 0.4;
 
 export interface RequiredDataProperties {
   [key: string]: any;
@@ -38,14 +34,16 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   xAxisProps,
   yAxisProps,
   bars,
+  barPadding = 0.4,
   numberFormatter,
-  axisColor,
+  axisColor = '#07080A',
   hideLegend,
   hideBarText,
   barTextColor,
   xAccessor = 'valueX',
   xScaleDomain,
   yScaleDomain,
+  showYGridLines,
   ...restProps
 }: Omit<BarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
@@ -101,9 +99,29 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
     }, {} as any);
   }, [bars, data, xAxisScale, countScale, xAccessor]);
 
+  const yGridValues = useYGridValues(
+    !!showYGridLines,
+    yAxisProps?.tickValues || countScale.ticks(),
+    countScale,
+    innerChartHeight
+  );
+
+  console.log(yGridValues);
+
   return (
     <div style={{ position: 'relative' }}>
       <SafeSVG width={outerChartWidth} height={outerChartHeight}>
+        {yGridValues?.map((value, index) => (
+          <Line
+            key={index}
+            x1={offset.left}
+            x2={outerChartWidth}
+            y1={value}
+            y2={value}
+            stroke={`${axisColor}44`}
+            strokeWidth={1}
+          />
+        ))}
         <Group left={offset.left} top={offset.top} width={innerChartWidth} height={innerChartHeight}>
           <BarGroup
             data={data}

@@ -20,7 +20,7 @@ const TooltipInPortalContent = ({ children }: { children: React.ReactNode | Reac
   );
 
   const isOutOfBoundsLeft = Boolean(
-    tooltipRef.current && tooltipRef.current.getBoundingClientRect().left - (tooltipRef.current.clientWidth / 2) < 0
+    tooltipRef.current && tooltipRef.current.getBoundingClientRect().left - tooltipRef.current.clientWidth / 2 < 0
   );
 
   React.useEffect(() => {
@@ -66,7 +66,7 @@ export const TooltipContent = ({ tooltipContent, tooltipXOffset, tooltipTitle }:
           {!tooltipContent && (
             <>
               {tooltipTitle ? (
-                <span className="react-charts__tooltip-title">hello</span>
+                <span className="react-charts__tooltip-title">{tooltipTitle(tooltipData)}</span>
               ) : (
                 <>
                   {/* If valueX is a date, by default render this as the date of the tooltip. */}

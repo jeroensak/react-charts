@@ -4,14 +4,16 @@ import { SafeSVG } from '../../utils/safe-svg';
 import React, { ReactText } from 'react';
 import { highestValue } from '../../utils/min-max';
 import { useChartDimensions, withChartWrapper } from '../with-chart-wrapper';
-import { BarStack } from '@visx/shape';
+import { BarStack, Line } from '@visx/shape';
 import { TooltipCursor } from '../tooltip/tooltip-cursor';
 import { BarGroupBar, StackKey } from '@visx/shape/lib/types';
 import { Axes, ExternalAxesProps } from '../axes';
 import { Legend } from '../legend';
 import { TextWithBackground } from './text-with-background';
+import { GeneralChartProps } from '../../chart.interface';
+import { useYGridValues } from '../../utils/use-grid-values';
 
-interface StackedBarchartProps<DataType> extends ExternalAxesProps {
+interface StackedBarchartProps<DataType> extends ExternalAxesProps, GeneralChartProps {
   data: DataType[];
   bars: {
     accessor: string;
@@ -19,12 +21,8 @@ interface StackedBarchartProps<DataType> extends ExternalAxesProps {
     label: string;
   }[];
   barPadding?: number;
-  hideTooltip?: boolean;
-  hideLegend?: boolean;
   hideBarText?: boolean;
   barTextColor?: string;
-  xScaleDomain?: [string, string] | [number, number] | [Date, Date];
-  yScaleDomain?: [number, number];
   xAccessor?: string;
 }
 
@@ -44,6 +42,9 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   xAccessor = 'valueX',
   xScaleDomain,
   yScaleDomain,
+  showYGridLines,
+  yAxisProps,
+  axisColor = '#07080A',
   ...restProps
 }: Omit<StackedBarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const [barWidth, setBarWidth] = React.useState(0);
@@ -104,9 +105,27 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
     }, {} as any);
   }, [bars, data, timeScale, countScale, xAccessor]);
 
+  const yGridValues = useYGridValues(
+    !!showYGridLines,
+    yAxisProps?.tickValues || countScale.ticks(),
+    countScale,
+    innerChartHeight
+  );
+
   return (
     <div style={{ position: 'relative' }}>
       <SafeSVG width={outerChartWidth} height={outerChartHeight}>
+        {yGridValues?.map((value, index) => (
+          <Line
+            key={index}
+            x1={offset.left}
+            x2={outerChartWidth}
+            y1={value}
+            y2={value}
+            stroke={`${axisColor}44`}
+            strokeWidth={1}
+          />
+        ))}
         <Group left={offset.left} top={offset.top} width={innerChartWidth} height={innerChartHeight}>
           {!hideTooltip && (
             <TooltipCursor
@@ -157,8 +176,8 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
           offsetLeft={offset.left}
           xAxisTopOffset={innerChartHeight}
           xAxisProps={restProps.xAxisProps}
-          yAxisProps={restProps.yAxisProps}
-          axisColor={restProps.axisColor}
+          yAxisProps={yAxisProps}
+          axisColor={axisColor}
           numberFormatter={numberFormatter}
           simplified={restProps.simplified}
           textColor={restProps.textColor}

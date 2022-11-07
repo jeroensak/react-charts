@@ -10,6 +10,8 @@ import { getMinMaxWithPadding } from '../utils/min-max';
 import { TooltipCursor } from './tooltip/tooltip-cursor';
 import { Axes, ExternalAxesProps } from './axes';
 import { Legend } from './legend';
+import { GeneralChartProps } from '../chart.interface';
+import { useXGridValues, useYGridValues } from '../utils/use-grid-values';
 
 export interface RequiredDataProperties {
   [key: string]: any;
@@ -24,15 +26,10 @@ export interface LineMeta {
   dotted?: boolean;
 }
 
-export interface LineChartProps<DataType> extends ExternalAxesProps {
+export interface LineChartProps<DataType> extends ExternalAxesProps, GeneralChartProps {
   lines: LineMeta[];
   data: DataType[];
-  hideTooltip?: boolean;
-  hideLegend?: boolean;
-  countScaleDomain?: [number, number];
-  timeScaleDomain?: [Date, Date];
   showXGridLines?: boolean;
-  showYGridLines?: boolean;
 }
 
 const LineChartBase = <DataType extends RequiredDataProperties>({
@@ -42,8 +39,8 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   yAxisProps,
   hideTooltip,
   hideLegend,
-  timeScaleDomain,
-  countScaleDomain,
+  xScaleDomain,
+  yScaleDomain,
   axisColor = '#07080A',
   showXGridLines,
   showYGridLines,
@@ -58,17 +55,17 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const countScale = React.useMemo(
-    () => scaleLinear({ domain: countScaleDomain || [yMin, yMax], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax, yMin, countScaleDomain]
+    () => scaleLinear({ domain: yScaleDomain || [yMin, yMax], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yMin, yScaleDomain]
   );
 
   const timeScale = React.useMemo(
     () =>
       scaleTime({
-        domain: timeScaleDomain || data?.length ? [data[0].date, data.at(-1)!.date] : [],
+        domain: xScaleDomain || data?.length ? [data[0].date, data.at(-1)!.date] : [],
         range: [0, innerChartWidth],
       }),
-    [innerChartWidth, timeScaleDomain]
+    [innerChartWidth, xScaleDomain]
   );
 
   const dataForTooltip = React.useMemo(() => {
@@ -90,21 +87,20 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
     }, {} as any);
   }, [lines, data, timeScale, countScale]);
 
-  const xGridValues = React.useMemo(() => {
-    if (!showXGridLines) return null;
+  const xGridValues = useXGridValues(
+    !!showXGridLines,
+    xAxisProps?.tickValues || timeScale.ticks(),
+    timeScale,
+    offset.left,
+    outerChartWidth
+  );
 
-    return (xAxisProps?.tickValues || timeScale.ticks())
-      .map((v) => timeScale(v) + offset.left)
-      .filter((v) => v !== offset.left && v !== outerChartWidth);
-  }, [showXGridLines, timeScale, offset.left, outerChartWidth]);
-
-  const yGridValues = React.useMemo(() => {
-    if (!showYGridLines) return null;
-
-    return (yAxisProps?.tickValues || countScale.ticks())
-      .map((v) => countScale(v))
-      .filter((v) => v !== 0 && v !== innerChartHeight);
-  }, [showYGridLines, countScale, offset.left, outerChartWidth]);
+  const yGridValues = useYGridValues(
+    !!showYGridLines,
+    yAxisProps?.tickValues || countScale.ticks(),
+    countScale,
+    innerChartHeight
+  );
 
   return (
     <div style={{ position: 'relative' }}>
