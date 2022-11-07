@@ -6,7 +6,7 @@ import React, { useId } from 'react';
 import { useChartDimensions, withChartWrapper } from './with-chart-wrapper';
 import { SafeSVG } from '../utils/safe-svg';
 import { LinearGradient } from '@visx/gradient';
-import { getMinMaxWithPadding } from '../utils/min-max';
+import { getMinMax } from '../utils/min-max';
 import { TooltipCursor } from './tooltip/tooltip-cursor';
 import { Axes, ExternalAxesProps } from './axes';
 import { Legend } from './legend';
@@ -44,14 +44,15 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   axisColor = '#07080A',
   showXGridLines,
   showYGridLines,
+  chartYDomainPadding = 0,
   ...restProps
 }: Omit<LineChartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const id = useId();
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
 
   const { min: yMin, max: yMax } = React.useMemo(
-    () => getMinMaxWithPadding(data, ...lines.map((a) => a.accessor)),
-    [data, lines]
+    () => getMinMax(data, chartYDomainPadding, ...lines.map((a) => a.accessor)),
+    [data, lines, chartYDomainPadding]
   );
 
   const countScale = React.useMemo(

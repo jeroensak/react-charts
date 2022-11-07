@@ -2,7 +2,7 @@ import { Group } from '@visx/group';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { SafeSVG } from '../../utils/safe-svg';
 import React, { ReactText } from 'react';
-import { highestValue } from '../../utils/min-max';
+import { getMinMax } from '../../utils/min-max';
 import { useChartDimensions, withChartWrapper } from '../with-chart-wrapper';
 import { BarStack, Line } from '@visx/shape';
 import { TooltipCursor } from '../tooltip/tooltip-cursor';
@@ -45,20 +45,22 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   showYGridLines,
   yAxisProps,
   axisColor = '#07080A',
+  chartYDomainPadding = 0,
   ...restProps
 }: Omit<StackedBarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const [barWidth, setBarWidth] = React.useState(0);
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
 
-  const yMax = React.useMemo(
+  const { max: yMax } = React.useMemo(
     () =>
-      highestValue(
+      getMinMax(
         data.map((entry) => ({
           total: bars.reduce((acc, curr) => acc + entry[curr.accessor], 0),
         })),
+        chartYDomainPadding,
         'total'
       ),
-    [data, bars]
+    [data, bars, chartYDomainPadding]
   );
 
   const timeScale = React.useMemo(
@@ -82,7 +84,7 @@ const StackedBarChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const countScale = React.useMemo(
-    () => scaleLinear({ domain: yScaleDomain || [0, yMax * 1.1], range: [innerChartHeight, 0] }),
+    () => scaleLinear({ domain: yScaleDomain || [0, yMax], range: [innerChartHeight, 0] }),
     [innerChartHeight, yMax, yScaleDomain]
   );
 

@@ -5,7 +5,7 @@ import { TextWithBackground } from './text-with-background';
 import { useChartDimensions, withChartWrapper } from '../with-chart-wrapper';
 import { BarGroup, Line } from '@visx/shape';
 import { TooltipCursor } from '../tooltip/tooltip-cursor';
-import { highestValue } from '../../utils/min-max';
+import { getMinMax } from '../../utils/min-max';
 import { SafeSVG } from '../../utils/safe-svg';
 import { Axes, ExternalAxesProps } from '../axes';
 import { Legend } from '../legend';
@@ -45,12 +45,17 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   xScaleDomain,
   yScaleDomain,
   showYGridLines,
+  chartYDomainPadding = 0,
   ...restProps
 }: Omit<BarchartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
   const [barWidth, setBarWidth] = React.useState(0);
 
-  const yMax = useMemo(() => highestValue(data, ...bars.map((a) => a.accessor)), [data, bars]);
+  const { min: yMin, max: yMax } = React.useMemo(
+    () => getMinMax(data, chartYDomainPadding, ...bars.map((a) => a.accessor)),
+    [data, bars, chartYDomainPadding]
+  );
+
   const xAxisScale = useMemo(
     () =>
       scaleBand<number | string | Date>({
@@ -77,8 +82,8 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const yAxisScale = useMemo(
-    () => scaleLinear({ domain: yScaleDomain || [0, yMax], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax, yScaleDomain]
+    () => scaleLinear({ domain: yScaleDomain || [yMin, yMax], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yScaleDomain, yMin]
   );
 
   const dataForTooltip = React.useMemo(() => {

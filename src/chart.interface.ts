@@ -4,4 +4,5 @@ export interface GeneralChartProps {
   showYGridLines?: boolean;
   xScaleDomain?: [string, string] | [number, number] | [Date, Date];
   yScaleDomain?: [number, number];
+  chartYDomainPadding?: number;
 }

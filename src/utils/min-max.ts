@@ -55,7 +55,7 @@ export const highestValue = (data: Array<{}>, ...keys: string[]) => {
  * Eg: highestValueWithPadding([[{val: 3}], [{val:8}]], 'val') ==> 8
  * @param data An array of arrays of objects
  */
-export const getMinMaxWithPadding = (data: Array<Array<{}>> | Array<{}>, ...keys: string[]) => {
+export const getMinMax = (data: Array<Array<{}>> | Array<{}>, paddingPercentage: number, ...keys: string[]) => {
   let array: Array<{}>;
   if (arrayIsTwoDimensional(data)) {
     // reduce the two dimensional array to a single dimensional array
@@ -67,9 +67,9 @@ export const getMinMaxWithPadding = (data: Array<Array<{}>> | Array<{}>, ...keys
   const highest = highestValue(array, ...keys);
   const lowest = lowestValue(array, ...keys);
   const difference = highest - lowest;
-  let lowestWithPadding = lowest - difference / 10;
+  let lowestWithPadding = lowest - difference * paddingPercentage;
   if (lowest >= 0 && lowestWithPadding < 0) lowestWithPadding = 0;
-  const highestWithPadding = highest + difference / 10;
+  const highestWithPadding = highest + difference * paddingPercentage;
   return { min: lowestWithPadding, max: highestWithPadding };
 };
 
