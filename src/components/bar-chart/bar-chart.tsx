@@ -51,7 +51,7 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   const { offset, innerChartWidth, innerChartHeight, outerChartHeight, outerChartWidth } = useChartDimensions();
   const [barWidth, setBarWidth] = React.useState(0);
 
-  const { min: yMin, max: yMax } = React.useMemo(
+  const { max: yMax } = React.useMemo(
     () => getMinMax(data, chartYDomainPadding, ...bars.map((a) => a.accessor)),
     [data, bars, chartYDomainPadding]
   );
@@ -82,8 +82,8 @@ const BarChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const yAxisScale = useMemo(
-    () => scaleLinear({ domain: yScaleDomain || [yMin, yMax], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax, yScaleDomain, yMin]
+    () => scaleLinear({ domain: yScaleDomain || [0, yMax], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yScaleDomain]
   );
 
   const dataForTooltip = React.useMemo(() => {
