@@ -8,9 +8,9 @@ All charts are rendered as svg and directly usable in React.
 
 ## Installation
 
-Install the package with `npm install @js/react-charts --save` or `yarn add @js/react-charts`.
+Install the package with `npm install @jeroensak/react-charts --save` or `yarn add @jeroensak/react-charts`.
 
-Add the optional styling for the tooltip and chart loading animation by importing `@js/react-charts/styles.css`.
+Add the optional styling for the tooltip and chart loading animation by importing `@jeroensak/react-charts/lib/esm/styles.css`.
 
 <br />
 
