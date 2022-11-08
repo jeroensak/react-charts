@@ -3,6 +3,8 @@
 Basic charts components to be used in a react project. Charts are based on [visx](https://airbnb.io/visx/), which is based on [d3js](https://d3js.org/).
 These charts are simple wrappers to make it easier to quickly implement re-usable charts while still being customizable.
 All charts are rendered as svg and directly usable in React.
+<br />
+You can view the package [here on storybook](https://jeroensak-react-charts.netlify.app/).
 
 <br />
 
