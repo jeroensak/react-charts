@@ -65,6 +65,16 @@ export default {
 const BarChartTemplate: ComponentStory<typeof BarChartComponent> = (args) => (
   <div style={{ marginTop: '80px', padding: '20px' }}>
     <BarChartComponent {...args} />
+    <br />
+    <pre>{`<BarChart
+  height="400px"
+  data={[{ value: 9, otherValue: 3, x: '31-10-2022'}, ...]}
+  xAccessor="x"
+  bars={[
+    { accessor: 'value', color: '#008F96', label: 'value', area: '#008F9633' },
+    { accessor: 'otherValue', color: '#F5AD52', label: 'other value', dotted: true }
+  ]}
+/>`}</pre>
   </div>
 );
 

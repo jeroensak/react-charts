@@ -71,6 +71,15 @@ export default {
 const LineChartTemplate: ComponentStory<typeof LineChartComponent> = (args) => (
   <div style={{ marginTop: '80px', padding: '20px' }}>
     <LineChartComponent {...args} />
+    <br />
+    <pre>{`<LineChart
+  height="400px"
+  data={[{ value: 9, otherValue: 3, date: new Date('11/11/2022')}, ...]}
+  lines={[
+    { accessor: 'value', color: '#008F96', label: 'value', area: '#008F9633' },
+    { accessor: 'otherValue', color: '#F5AD52', label: 'other value', dotted: true }
+  ]}
+/>`}</pre>
   </div>
 );
 
