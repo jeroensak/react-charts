@@ -21,7 +21,7 @@ const data = [
 ];
 
 export default {
-  title: 'Stacked Bar Chart',
+  title: 'Charts',
   component: StackedBarChartComponent,
   parameters: {
     layout: 'fullscreen',

@@ -21,7 +21,7 @@ const data = [
 ];
 
 export default {
-  title: 'Bar Chart',
+  title: 'Charts',
   component: BarChartComponent,
   parameters: {
     layout: 'fullscreen',

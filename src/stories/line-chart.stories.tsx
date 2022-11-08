@@ -4,8 +4,8 @@ import dayjs from 'dayjs';
 import { LineChart as LineChartComponent } from '../components/line-chart';
 
 const lines = [
-  { accessor: 'value', color: '#008F96', label: 'value' },
-  { accessor: 'otherValue', color: '#F5AD52', label: 'other value' },
+  { accessor: 'value', color: '#008F96', label: 'value', area: '#008F9633' },
+  { accessor: 'otherValue', color: '#F5AD52', label: 'other value', dotted: true },
 ];
 
 const data = [
@@ -21,7 +21,7 @@ const data = [
 ];
 
 export default {
-  title: 'Line Chart',
+  title: 'Charts',
   component: LineChartComponent,
   parameters: {
     layout: 'fullscreen',
