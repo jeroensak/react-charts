@@ -27,6 +27,10 @@ export default {
     layout: 'fullscreen',
   },
   argTypes: {
+    xScaleDomain: {
+      control: 'object',
+      defaultValue: [data[0].date, dayjs().subtract(3, 'days').startOf('day').toDate()]
+    },
     simplified: {
       control: 'boolean',
       defaultValue: false,

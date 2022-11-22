@@ -60,10 +60,15 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
     [innerChartHeight, yMax, yMin, yScaleDomain]
   );
 
+  const timeScaleDomain = React.useMemo(
+    () => (xScaleDomain as [Date, Date]) || (data?.length ? [data[0].date, data.at(-1)!.date] : []),
+    [xScaleDomain, data]
+  );
+
   const timeScale = React.useMemo(
     () =>
       scaleTime({
-        domain: xScaleDomain ? (data?.length ? [data[0].date, data.at(-1)!.date] : []) : [],
+        domain: timeScaleDomain,
         range: [0, innerChartWidth],
       }),
     [innerChartWidth, xScaleDomain]
@@ -142,12 +147,10 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
         ))}
         <Group width={innerChartWidth} height={innerChartHeight} left={offset.left}>
           {lines.map((line) => {
-            let lineMinX = timeScale(data.find((entry) => entry[line.accessor] !== undefined)?.date || 0);
+            let lineMinX = timeScale(timeScaleDomain[0]);
             lineMinX = lineMinX < 0 ? 0 : lineMinX;
 
-            const lineMaxX = timeScale(
-              [...data].reverse().find((entry) => entry[line.accessor] !== undefined)?.date || 0
-            );
+            const lineMaxX = timeScale(timeScaleDomain[1]);
 
             return (
               <React.Fragment key={line.accessor}>
