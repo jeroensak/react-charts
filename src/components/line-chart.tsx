@@ -63,7 +63,7 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   const timeScale = React.useMemo(
     () =>
       scaleTime({
-        domain: xScaleDomain || data?.length ? [data[0].date, data.at(-1)!.date] : [],
+        domain: xScaleDomain ? (data?.length ? [data[0].date, data.at(-1)!.date] : []) : [],
         range: [0, innerChartWidth],
       }),
     [innerChartWidth, xScaleDomain]
