@@ -76,7 +76,7 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
         [curr.accessor]: {
           ...curr,
           data: data.map((a) => ({
-            value: typeof a[curr.accessor] === 'number' ? Math.round(a[curr.accessor]) : a[curr.accessor],
+            value: a[curr.accessor],
             time: a.date,
           })),
           xAccessor: 'time',
