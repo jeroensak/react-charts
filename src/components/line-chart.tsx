@@ -30,6 +30,7 @@ export interface LineChartProps<DataType> extends ExternalAxesProps, GeneralChar
   lines: LineMeta[];
   data: DataType[];
   showXGridLines?: boolean;
+  startYAtZero?: boolean;
 }
 
 const LineChartBase = <DataType extends RequiredDataProperties>({
@@ -45,6 +46,7 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   showXGridLines,
   showYGridLines,
   chartYDomainPadding = 0,
+  startYAtZero,
   ...restProps
 }: Omit<LineChartProps<DataType>, 'data'> & { data: DataType[] }) => {
   const id = useId();
@@ -56,8 +58,8 @@ const LineChartBase = <DataType extends RequiredDataProperties>({
   );
 
   const countScale = React.useMemo(
-    () => scaleLinear({ domain: yScaleDomain || [yMin, yMax], range: [innerChartHeight, 0] }),
-    [innerChartHeight, yMax, yMin, yScaleDomain]
+    () => scaleLinear({ domain: yScaleDomain || [startYAtZero ? 0 : yMin, yMax], range: [innerChartHeight, 0] }),
+    [innerChartHeight, yMax, yMin, yScaleDomain, startYAtZero]
   );
 
   const timeScaleDomain = React.useMemo(
