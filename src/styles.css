@@ -51,3 +51,13 @@
     opacity: 0.8;
   }
 }
+
+
+.scatter-charts__circle {
+  opacity: 0.6;
+  transition: opacity 200ms;
+}
+
+.scatter-charts__circle:hover {
+  opacity: 1;
+}

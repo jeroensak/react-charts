@@ -14,7 +14,7 @@ export interface ExternalAxesProps {
 
 interface AxesProps {
   yAxisScale: ScaleLinear<number, number, never>;
-  xAxisScale: ScaleTime<number, number, never> | ScaleBand<number | string | Date>;
+  xAxisScale: ScaleTime<number, number, never> | ScaleBand<number | string | Date> | ScaleLinear<number, number, never>;
   offsetLeft: number;
   xAxisTopOffset: number;
 }
